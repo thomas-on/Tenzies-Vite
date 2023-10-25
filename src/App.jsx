@@ -16,10 +16,8 @@ export default function App() {
   const [isRunning, setIsRunning] = React.useState(false);
   const [gameTime, setGameTime] = React.useState(0);
   const [bestTime, setBestTime] = React.useState(0);
-
-  const wonStyle = {
-    backgroundColor: tenzies ? "#F8B90D" : "#C4F4BD",
-  };
+  const [startGameScreen, setStartGameScreen] = React.useState(false);
+  const [showConfetti, setShowConfetti] = React.useState(false);
 
   React.useEffect(() => {
     const allHeld = dice.every((die) => die.isHeld);
@@ -28,6 +26,8 @@ export default function App() {
       setTenzies(true);
       setIsRunning(false);
       setGameTime(time);
+      setStartGameScreen(true);
+      setShowConfetti(true);
     }
   }, [dice]);
 
@@ -44,19 +44,43 @@ export default function App() {
   }, [isRunning]);
 
   React.useEffect(() => {
-    const lastBestTime = localStorage.getItem("bestTime");
-    console.log(lastBestTime);
+    const lastTimeFromLocalStorage = JSON.parse(
+      localStorage.getItem("bestTime")
+    );
+    console.log(lastTimeFromLocalStorage);
     console.log(gameTime);
-    if (gameTime > lastBestTime && lastBestTime > 0) {
-      console.log("hehe");
-      localStorage.setItem("bestTime", JSON.stringify(lastBestTime));
-      setBestTime(lastBestTime);
-    } else {
-      console.log("hehe");
+    if (
+      tenzies &&
+      lastTimeFromLocalStorage != 0 &&
+      gameTime < lastTimeFromLocalStorage
+    ) {
+      localStorage.setItem("bestTime", JSON.stringify(gameTime));
+      setBestTime(gameTime);
+    } else if (tenzies && lastTimeFromLocalStorage === 0 && gameTime > 0) {
+      console.log(gameTime);
       localStorage.setItem("bestTime", JSON.stringify(gameTime));
       setBestTime(gameTime);
     }
   }, [gameTime]);
+
+  React.useEffect(() => {
+    const dataFromLocalStorage = JSON.parse(localStorage.getItem("bestTime"));
+    if (
+      dataFromLocalStorage === null ||
+      (dataFromLocalStorage === 0 && gameTime > 0)
+    ) {
+      localStorage.setItem("bestTime", JSON.stringify(gameTime));
+      setBestTime(gameTime);
+    } else {
+      setBestTime(dataFromLocalStorage);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 10000);
+  }, [tenzies]);
 
   function generateNewDie() {
     let diceImage;
@@ -109,12 +133,16 @@ export default function App() {
       isHeld={die.isHeld}
       holdDice={() => holdDice(die.id)}
       imageURL={die.imageURL}
+      tenzies={tenzies}
+      isRunning={isRunning}
+      startGameScreen={startGameScreen}
     />
   ));
 
   function rollDice() {
+    setIsRunning(true);
+    console.log(isRunning);
     if (!tenzies) {
-      setIsRunning(true);
       setDice((oldDice) =>
         oldDice.map((die) => {
           return die.isHeld ? die : generateNewDie();
@@ -124,7 +152,7 @@ export default function App() {
       setTenzies(false);
       setDice(allNewDice);
       setTime(0);
-      setIsRunning(true);
+      setIsRunning(false);
     }
   }
 
@@ -138,19 +166,14 @@ export default function App() {
 
   return (
     <main>
-      {tenzies && <Confetti />}
+      {showConfetti && <Confetti />}
       <h1 className="title">Tenzies</h1>
       <p className="instructions">
         Roll until all dice are the same. Click each die to freeze it at its
         current value between rolls.
       </p>
       <div className="dice-container">{diceElements}</div>
-      <button
-        className="roll-dice"
-        id="roll-dice"
-        onClick={rollDice}
-        style={wonStyle}
-      >
+      <button className="roll-dice" id="roll-dice" onClick={rollDice}>
         {tenzies && !isRunning
           ? "New game"
           : !tenzies && isRunning

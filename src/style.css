@@ -57,6 +57,7 @@ main {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border: 3px solid #c4f4bd;
 }
 
 .die-num {
@@ -110,5 +111,7 @@ main {
 
 .timing-values {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: "Space Mono", monospace;
 }
