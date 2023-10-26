@@ -1,14 +1,14 @@
 # Tenzies
 
 ### Skills: and Technologies used
-Basic Web Design and layout: HTML, CSS, Figma 
-JavaScript front-end library: ReactJS
-Cloud Storage: Local storage
-Built tools: Vite
-Runtime Environment: NodeJS
-Deployment: Netlify
-Code Editor: VSCode, ESLint, Prettier
-Version Control: Git, Github
+- Basic Web Design and layout: HTML, CSS, Figma 
+- JavaScript front-end library: ReactJS
+- Cloud Storage: Local storage
+- Built tools: Vite
+- Runtime Environment: NodeJS
+- Deployment: Netlify
+- Code Editor: VSCode, ESLint, Prettier
+- Version Control: Git, Github
 
 ### Creating and rolling the dice component
 The dice components were generated using the generateNewDie function which switches between dice numbers with matching dice images. These dice images were then passed down as props to the Die component to be rendered to the UI.
